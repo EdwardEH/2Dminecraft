@@ -202,6 +202,7 @@ def mob_pos():
          return x,y
 
 print('\33[2J')
+print('\33[?25l')
 t=2
 end=False
 lives=1
