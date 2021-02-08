@@ -169,11 +169,12 @@ class players:
          board[self.y][self.x]=' '
          self.x+=1
          board[self.y][self.x]=self.player
-         if board[self.y][self.x]=='b':
+         if 'b' in board[self.y]:
             for mob in mobs:
-               if board[mob.y][mob.x]==self.player:
+               if self.y==mob.y:
                   for i in mob.drops:
                      self.inv[i]+=1
+                  mob.Type=' '
       upboard()
 
    def inventry(self):
@@ -236,8 +237,8 @@ while not end:
       mob = sprite(True,['iron','warg hide'],'b',x,y)
       mobs+=[mob]
    else:
+      pl.move(a)
       for mob in mobs:
          mob.move()
-      pl.move(a)
       pl.do_gravity()
 
