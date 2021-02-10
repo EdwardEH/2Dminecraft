@@ -51,19 +51,19 @@ class sprite:
    def move(self):
       global end,lives
       di=random.choice(['up','down','left','right'])
-      if (di == 'up') and (not pl.world[self.y-1][self.x]==' '):
+      if di == 'up':
          pl.world[self.y][self.x]=' '
          self.y-=1
          pl.world[self.y][self.x]=self.Type
-      elif (di == 'down') and (not pl.world[self.y+1][self.x]==' '):
+      elif di == 'down':
          pl.world[self.y][self.x]=' '
          self.y+=1
          pl.world[self.y][self.x]=self.Type
-      elif (di == 'left') and (not pl.world[self.y][self.x+1]==' '):
+      elif di == 'left':
          pl.world[self.y][self.x]=' '
          self.x+=1
          pl.world[self.y][self.x]=self.Type
-      elif (di == 'right') and (not pl.world[self.y][self.x-1]==' '):
+      elif di == 'right':
          pl.world[self.y][self.x]=' '
          self.x-=1
          pl.world[self.y][self.x]=self.Type
