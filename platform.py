@@ -11,7 +11,7 @@ class sprite:
       self.y=y
       self.Type=t
 
-   def shoot(self,di):
+   def shoot(self,di,shot):
       global lives
       arrows={'right':[],'up':[],'left':[],'down':[]}
       if di == 'right':
@@ -19,25 +19,25 @@ class sprite:
          arrows['right']+=[arrow]
          for i in arrows['right']:
             i.x-=1
-            pl.world[i.y][i.x]='*'
+            pl.world[i.y][i.x]=shot
       if di == 'left':
          arrow = block('wood',self.x+1,self.y)
          arrows['left']+=[arrow]
          for i in arrows['left']:
             i.x+=1
-            pl.world[i.y][i.x]='*'
+            pl.world[i.y][i.x]=shot
       if di == 'up':
          arrow = block('wood',self.x,self.y-1)
          arrows['up']+=[arrow]
          for i in arrows['up']:
             i.y-=1
-            pl.world[i.y][i.x]='*'
+            pl.world[i.y][i.x]=shot
       if di == 'down':
          arrow = block('wood',self.x,self.y+1)
          arrows['down']+=[arrow]
          for i in arrows['down']:
             i.y+=1
-            pl.world[i.y][i.x]='*'
+            pl.world[i.y][i.x]=shot
       for key in arrows:
          for arrow in arrows[key]:
             if pl.world[arrow.y][arrow.x]=='s':
@@ -68,7 +68,7 @@ class sprite:
          self.x-=1
          pl.world[self.y][self.x]=self.Type
       if self.Type == 'D':
-         self.shoot(random.choice(['up','down','left','right']))
+         self.shoot(random.choice(['up','down','left','right']),'*')
       if (self.h==True) and (pl.world[self.y][self.x]=='s'):
          if lives==1:
             print('you died')
@@ -181,9 +181,43 @@ class players:
    def __init__(self,x,y,p):
       self.x = x
       self.y = y
-      self.inv = {'wood':0,'stone':0,'iron':0,'warg hide':0,'dimond':0,'gold':0,'gun powder':0}
+      self.inv = {'wood':0,'stone':0,'iron':0,'warg hide':0,'dimond':0,'gold':0,'gun powder':0,'dwarven crossbow':0}
       self.player = p
       self.world=worlds[0]
+
+   def shoot(self,di,shot):
+      global lives
+      arrows={'right':[],'up':[],'left':[],'down':[]}
+      if di == 'right':
+         arrow = block('wood',self.x-1,self.y)
+         arrows['right']+=[arrow]
+         for i in arrows['right']:
+            i.x-=1
+            pl.world[i.y][i.x]=shot
+      if di == 'left':
+         arrow = block('wood',self.x+1,self.y)
+         arrows['left']+=[arrow]
+         for i in arrows['left']:
+            i.x+=1
+            pl.world[i.y][i.x]=shot
+      if di == 'up':
+         arrow = block('wood',self.x,self.y-1)
+         arrows['up']+=[arrow]
+         for i in arrows['up']:
+            i.y-=1
+            pl.world[i.y][i.x]=shot
+      if di == 'down':
+         arrow = block('wood',self.x,self.y+1)
+         arrows['down']+=[arrow]
+         for i in arrows['down']:
+            i.y+=1
+            pl.world[i.y][i.x]=shot
+      for key in arrows:
+         for arrow in arrows[key]:
+            for mob in mobs:
+               if (mob.x==arrow.x) and (mob.y == arrow.y):
+                   mob.Type=' '
+      upboard(pl.world)
 
    def move(self,di):
       global time
@@ -219,6 +253,8 @@ class players:
             self.inv['stone']-=1
          else:
             print('you have run out of stone')
+      if (crossbow.got) and (di == 's'):
+         self.shoot(random.choice(['up','down','left','right']),'"')
       if (di == 'a') and (spear.got):
          self.world[self.y][self.x]=' '
          self.x+=1
@@ -252,6 +288,9 @@ def upboard(board):
 def trade():
    os.system('clear')
    trades={'gold':'wood','warg hide':'gold','iron':'warg hide','dimond':'gold'}
+   a=input('do you want to trade with a dwarf')
+   if (a=='yes') and (crystal.got):
+      trades['dwarven crossbow']='gold'
    for key in trades:
       print(key+': '+trades[key])
    thing=input('>')
@@ -267,7 +306,10 @@ def setup():
    upboard(board)
    x,y=mob_pos()
    dragon=sprite(True,['gun powder'],'D',x,y)
+   x,y=mob_pos()
+   dwarf=sprite(False,['dwarven crossbow'],'d',x,y)
    mobs+=[dragon]
+   mobs+=[dwarf]
 
 def mob_pos():
    while True:
@@ -285,7 +327,7 @@ lives=1
 z=0
 worlds=[]
 
-coulors={'#':'\33[100m','b':'\33[92m','s':'\33[94m','^':'\33[43m','end':'\33[0m',' ':'\33[0m','T':'\33[43m','$':'\33[42m','D':'\33[31m','*':'\33[103m'}
+coulors={'#':'\33[100m','b':'\33[92m','s':'\33[94m','^':'\33[43m','end':'\33[0m',' ':'\33[0m','T':'\33[43m','$':'\33[42m','D':'\33[31m','*':'\33[103m','d':'\33[44m','"':'\33[34m'}
 
 pickaxe=item(False,['wood','iron'],'matock')
 sapling=item(False,['wood'],'sapling')
@@ -293,8 +335,9 @@ spear=item(True,['wood','wood','iron','iron'],'spear')
 armour=item(False,['warg hide'],'armour')
 crystal=item(False,['dimond','dimond','warg hide','gold','gold','dimond'],'crystal')
 TNT=item(False,['gun powder'],'TNT')
+crossbow=item(False,['dwarven crossbow'],'crossbow')
 
-items = {'matock':pickaxe,'sapling':sapling,'spear':spear,'armour':armour,'crystal':crystal,'TNT':TNT}
+items = {'matock':pickaxe,'sapling':sapling,'spear':spear,'armour':armour,'crystal':crystal,'TNT':TNT,'crossbow':crossbow}
 mobs=[]
 
 screen=screen(40,40)
